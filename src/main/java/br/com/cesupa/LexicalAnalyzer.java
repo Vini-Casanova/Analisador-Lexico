@@ -12,6 +12,7 @@ public class LexicalAnalyzer {
         try {
             String codigo = readFile("src/main/java/br/com/cesupa/code/codigo.txt");
             Regras regras = new Regras();
+           // System.out.println(codigo);
             List<Simbolos> tokens = tokenize(regras.getTabela(),codigo);
 
             for (Simbolos token : tokens) {
@@ -47,6 +48,15 @@ public class LexicalAnalyzer {
             if (regras.containsKey(currentChar)) {
                 tokens.add(new Simbolos(regras.get(currentChar)));
                 position++;
+            } else if ('"' == currentChar) {
+                StringBuilder result = new StringBuilder();
+                position++;
+                while ('"' != currentChar(position,input)) {
+                    result.append(currentChar(position,input));
+                    position++;
+                }
+                position++;
+                tokens.add(new Simbolos(Token.LITERAL, result.toString()));
             } else if (Character.isLetter(currentChar)) {
                 StringBuilder result = new StringBuilder();
                 while (Character.isLetterOrDigit(currentChar(position,input))) {
@@ -56,11 +66,13 @@ public class LexicalAnalyzer {
                 tokens.add(new Simbolos(Token.IDENT, result.toString()));
             } else if (Character.isDigit(currentChar)) {
                 StringBuilder result = new StringBuilder();
-                while (Character.isDigit(currentChar(position,input))) {
+                Token numberType = Token.NUM;
+                while (Character.isDigit(currentChar(position,input)) || '.' == currentChar(position,input)) {
+                    if ('.' == currentChar(position,input)) numberType = Token.FLOAT;
                     result.append(currentChar(position,input));
                     position++;
                 }
-                tokens.add(new Simbolos(Token.NUM, result.toString()));
+                tokens.add(new Simbolos(numberType, result.toString()));
             }  else {
                 System.out.println("Unexpected character: " + currentChar);
             }

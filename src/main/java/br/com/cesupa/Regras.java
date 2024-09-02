@@ -18,7 +18,7 @@ public class Regras {
         tabela.put('=', Token.OP_ARITME);
         tabela.put('(', Token.PARENTESES);
         tabela.put(')', Token.PARENTESES);
-        tabela.put(' ', Token.BLANK);
+        tabela.put(' ', Token.ESPACO);
     }
 
 }
